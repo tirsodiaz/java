@@ -1,0 +1,15 @@
+situarse en la carpeta, botón derecho, Git Bash here
+ejecutar sh
+./iccdossierbot.sh C:\\allfunds\\flash_project\\flh-java\\FileImport\\IccImporter\\src\\test\\resources\\ICC-47_1.xlsx
+./iccdossierbot.sh C:\\allfunds\\flash_project\\flh-java\\FileImport\\IccImporter\\src\\test\\resources\\flusso_di_prova.xlsx
+
+ejecutar sh en servidor linux
+./iccdossierbot.sh /tmp/flusso_di_prova.xlsx
+
+ejecutar curl directamente en git bash
+curl -X POST http://localhost:10120/iccrea-import/iccrea-upload/dossier -F filePath=C:\\allfunds\\flash_project\\flh-java\\FileImport\\IccImporter\\src\\test\\resources\\ICC-47_1.xlsx -F ID_BRANCH=MIL -F ID_TRANSFER=0 -F NM_LOGIN=FLASH_MIL -F IMPORT_TYPE=IMICC -F RESULTS_FILE=1
+(ID_TRANSFER=0 no inserta en TRANSFER_LOG, -F RESULTS_FILE=1 crea fichero excepto si empty)
+
+ejecutar curl desde consola de windows
+curl -X POST http://localhost:10120/iccrea-import/iccrea-upload/dossier -F filePath=C:\\allfunds\\flash_project\\flh-java\\FileImport\\IccImporter\\src\\test\\resources\\ICC-47_1.xlsx -F ID_BRANCH=MIL -F ID_TRANSFER=0 -F NM_LOGIN=FLASH_MIL -F IMPORT_TYPE=IMICC -F RESULTS_FILE=1
+

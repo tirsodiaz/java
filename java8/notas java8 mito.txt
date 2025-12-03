@@ -1,0 +1,302 @@
+https://www.youtube.com/watch?v=4WEOzOndA68&list=PLvimn1Ins-419yVe5iPfiXrg4mZJl5kLS&index=1 (http://www.github.com/mitocode21)
+expresion lambda o predicado = metodo anónimo (donde se pueda usar un método anónimo se puede usar lambda o bien una referencia a método (::) en donde no pueden pasarse parámetros)
+
+Collections.sort(lista, (String p1,String p2) -> p1.compareTo(p2)); //2º parámetro es un predicado lambda
+Collections.sort(lista, String::compareTo);							//2º parámetro es un predicado referencia a método menos verboso o imperativo, más funcional que el anterior
+
+
+Las referencias son siempre a partir de interfaces funcionales (solo un método y no está definido)
+IOperacion operacion =  (x,y) ->         (x+y)/2; // IOperacion es una interface funcional. @FunctionalInterface es opcional en la interface
+IOperacion operacion =  (x,y) -> {return (x+y)/2;};
+IOperacion operacion =  (x,y) -> {
+		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
+		return (x+y)/2 + z;
+};
+IOperacion operacion =  () -> {
+		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
+		return (1+1)/2 + z;
+};
+operacion.calcularPromedio(2,3);
+
+
+interface todos los metodos son abstractos sin definir. se puede implementar de varias interfaces
+clase abstracta al menos un método es abstracto. No puede instanciarse, solo heredarse. solo se puede heredar de 1 clase
+interface con método default está implementado. Si implementamos de varios interfaces con mismo método default habrá que indicar qué método usar. PersonaA.super.hablar() PersonaB.super.hablar() PersonaA, PersonaB son interfaces
+
+referencia a metodo estatico: 	IOperacion op = ()->Clase.metodoestatico();
+								op.saludar();
+referencia a metodo estatico: 	IOperacion op = Clase::metodoestatico; //no pueden pasarse parámetros
+								op.saludar();  
+referencia a metodo instancia: 	Arrays.sort(nombres,(p1,p2) -> p1.compareToIgnoreCase(p2));
+								Arrays.sort(nombres,String::compareToIgnoreCase);
+								
+								IOperacion op = (x,y)->objeto.metodo(x,y);
+								op.saludar(1,2);
+								
+								IOperacion op = objeto::metodo; //no pueden pasarse parámetros
+								IOperacion op = this::metodo; 
+								op.saludar();  
+
+								IPersona ipersona = (x,y)->new Persona(x,y);
+								Persona persona = ipersona.crear(1, "Mito")
+								IPersona ipersona = Persona::new;
+								Persona persona = ipersona.crear(1, "Mito")
+
+colecciones en java8
+lista.forEach(x -> System.out.println(x));
+lista.forEach(System.out::println); //no pueden pasarse parámetros
+
+excepcion si borrado elemento de lista en un for: lista.remove(elemento) en un iterator:
+Iterator<String> it = lista.iterator;
+while (it.hasNext()){
+	if(it.next().equalsIgnoreCase("Code")){
+		it.remove();
+	}
+}
+=
+lista.removeIf(x->x.equalsIgnoreCase("Code"));
+lista.sort((x,y)->x.compareTo(y)); Collections.sort(lista,(x,y)->x.compareTo(y));
+lista.sort(String::compareTo);     Collections.sort(lista, String::compareTo);
+
+stream en java8 (filtrar, ordenar, transformar, limitar, contar) https://www.baeldung.com/jpa-entity-graph
+lista de la clase Collection
+lista.stream().filter(x->x.startsWith('M')).forEach(System.out::println);
+lista.stream().sorted().forEach(System.out::println);
+lista.stream().sorted((x,y)->y.compareTo(x)).forEach(System.out::println);
+lista.stream().map(String::toUpperCase).forEach(System.out::println);//transformar
+numeros.stream().map(x->Integer.parseInt(x)+1).forEach(System.out::println); 
+lista.stream().limit(2).forEach(System.out::println);//limitar
+lista.stream().count() //contar
+lista.paralellStream.forEach(System.out::println); //hilos, no recomendable en servidores de aplicaciones j2ee
+
+Optional para evitar los errores NullPointerException (es algo costoso el uso de esta clase)
+Optional op=Optional.of(valor) + op.get();
+Optional op=Optional.ofNullable(valor o nulo).orElse("predeterminado si null") (.orElse=siempre se ejecuta sea nulo o no pero si no es nulo no se asigna  .orElseGet no se ejecuta si no nulo)
+                                             .orElseThrow(NumberFormatException::new) //en caso de nulo lanzo excepcion
+String nullName = null;
+String name = Optional.ofNullable(nullName).orElse("john");
+assertEquals("john", name);										 
+				
+op.isPresent, op.isEmpty // conocer si contenido
+Optional.empty() //inicializar a vacío
+
+Optional<String> opt = Optional.of("baeldung");
+opt.ifPresent(name -> System.out.println(name.length()));
+
+opt = Optional.ofNullable(null); //internamente usa Optional.empty() si null o Optional.of(valor)
+assertTrue(opt.isEmpty());
+
+Clase Map java8
+map.forEach((k,v)->System.out.println("Key:"+k + " Value="+value))  //en lugar de iterar el map.entrySet() de v7
+map.entrySet().stream().forEach(System.out::println);
+map.putIfAbsent(4,"Jaime");
+map.computeIfPresent(2,(k,v)->k+v);
+map.getOrDefault(5,"valor por defecto");
+Map<Integer,String> map2 = map.entrySet().stream()
+			.filter(e->e.getValue.contains("o"))
+			.collect(Collectors.toMap(p->p.getKey(),p->p.getValue()));
+Student[] students = ...
+Arrays.stream(students) 		
+			.filter(s->s.getEdad()>=edad1&&s.getEdad()<=edad2)
+			.collect(Collectors.toList());
+
+Fechas java8
+LocalDate.of(1971, 3, 22); //.now();, .isAfter();, isBefore();
+LocalTime.of(3, 30, 45); //.now();, .isAfter();, isBefore();
+LocalDateTime.of(1971, 3, 22, 3, 30, 45); //, .now();, .isAfter();, isBefore();
+LocalDateTime.of(LocalDate.of(1971, 3, 22),LocalTime.of(3, 30, 45));
+
+Calendar calendar = Calendar.getInstance();
+calendar.setTimeZone(TimeZone.getTimeZone("Africa/Cairo"));
+// System.out.println("Hora en Africa/Cairo: " + getHoraFormato(calendar));
+Instant instant = calendar.toInstant();
+LocalDateTime ldtMadrid = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Madrid")); // calcula hora local Madrid con zona
+LocalDateTime ldtTurkey = LocalDateTime.ofInstant(instant, ZoneId.of("Turkey")); // calcula hora local Madrid con zona
+ldtMadrid.isBefore(ldtTurkey); // true
+ldtMadrid.isAfter(ldtTurkey); // false
+
+Instant instant1 = Instant.now();
+Instant instant2 = Instant.now();
+Duration.between(instant1, instant2).toMillis(); // .toMinutes()... //entre instants
+
+Period period = Period.between(ldtMadrid.toLocalDate(), ldtTurkey.toLocalDate()); // entre dates
+// period.getYears() + periodo.getMonths + periodo.getDays()
+
+// java7
+// DateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+// Date date = formateador.parse("21/01/1971");
+// String fechaCadena = formateador.format(Calendar.getInstance().getTime());
+// java8
+DateTimeFormatter formateador = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+LocalDate localDate = LocalDate.parse("1971/03/22", formateador);
+String fechaCadena = formateador.format(localDate);
+
+TimeZone timeZone = TimeZone.getDefault();
+TimeZone.setDefault(TimeZone.getTimeZone("Europe/Madrid"));
+
+ZoneId zoneId = ZoneId.of("Europe/Madrid");
+LocalDateTime.now(); // LocalDateTime.now(zoneId);
+LocalDateTime.now().atOffset(ZoneOffset.of("+05:00")); // crea odt
+LocalDateTime.now().atZone(ZoneOffset.of("+05:00")); // crea zdt
+LocalDateTime.now().atZone(ZoneId.of("+05:00")); // crea zdt
+LocalDateTime.now().atZone(zoneId); // crea zdt con offset +01:00
+LocalDateTime.now().atZone(zoneId).toLocalDateTime(); // crea ldt
+OffsetDateTime odt = LocalDateTime.now().atOffset(ZoneOffset.of("+01:00"));
+odt.withOffsetSameLocal(ZoneOffset.of("+02:00")); // crea odt con offset +02:00, misma hora no calcula, diferente offset
+odt.withOffsetSameInstant(ZoneOffset.of("+03:00")); // calcula nueva hora
+ZonedDateTime zdt = LocalDateTime.now().atZone(zoneId); // crea zdt con zoneid +01:00
+zdt.withZoneSameLocal(ZoneId.of("Africa/Cairo")); // crea zdt con zoneid Africa/Cairo, misma hora no calcula, diferente zoneid
+zdt.withZoneSameInstant(ZoneId.of("Africa/Cairo")); // calcula nueva hora
+// ZonedDateTime contiene localdatetime, zoneid y zoneoffset .toLocalDateTime(), getZone(), getOffset()
+LocalDateTime localDateTime = ZonedDateTime.now(zoneId).toLocalDateTime();
+ZoneOffset zoneOffset = ZonedDateTime.now(zoneId).getOffset(); // ZoneOffset.of("+02:00");
+zoneOffset = ZonedDateTime.now(ZoneId.of("Europe/Madrid")).getOffset();
+zoneOffset = OffsetDateTime.now(zoneId).getOffset();
+odt = OffsetDateTime.parse(inicio);// 1938-10-11T02:00:00.000+02:00
+odt = OffsetDateTime.parse("1938-10-11T02:00:00.000+02:00");
+localDateTime = LocalDateTime.parse(inicio);
+zdt = ZonedDateTime.parse("1938-10-11T02:00:00.000+02:00[Europe/Madrid]");
+// OffsetDateTime contiene localdatetime y zoneoffset .toLocalDateTime(), getOffset()
+ZonedDateTime.now(zoneId).toOffsetDateTime();
+OffsetDateTime.now(zoneId).toZonedDateTime();
+
+AltoOrden funciones https://youtu.be/hYEizawDADU
+pasar funcion como argumento de un método y apply(). 
+	private Function<String, String> convertirMayusculas = x->x.toUpperCase(); (primer String es entrada del apply y el segundo es salida del apply)
+	public void imprimir(Function<String,String> funcion, String valor){
+		System.out.println(funcion.apply(valor))
+	}
+	app.imprimir(app.convertirMayusculas,"Mito");
+
+llamar a un método que devuelve funcion para despues aplicar apply()
+	public Function<String,String> mostrar(String valor){
+		return (String x)->valor + x
+	}
+	app.mostrar("Hola ").apply("Coders");
+
+java6
+List<String> = Arrays.asList(String[])
+java11
+List<String> = List.of("1","2");
+
+List<Student> students = Arrays.asList(
+                new Student("John", 25),
+                new Student("Akon", 15),
+                new Student("John", 20),
+                new Student("Tony", 10)
+);
+
+
+ArrayList, LinkedList, LinkedHashMap (List y Linked respetan orden de entrada)
+HashSet, HashMap no respeta orden
+Ninguno se ordena implicitamente
+
+// Java 7 y antes
+--si implementación interfaz Comparator en clase Student
+Collections.sort(students, new Comparator<>() {
+    @Override
+    public int compare(Object o1, Object o2) {
+		Student s1 = (Student)o1;
+		Student s2 = (Student)o2;
+		int cmp = s1.getAge() - s2.getAge();
+	    if (cmp != 0) {
+	    	return cmp;
+	    }
+	    return s1.getName().compareTo(s2.getName());
+	}
+});
+
+--si implementación interfaz Comparable en clase Student
+Collections.sort(students, new Comparable<>() {
+	@Override
+	public int compareTo(Object o) {
+		Student s = (Student) o;
+    if (this.age != s.getAge()) {
+        return this.age - s.getAge();
+    }
+    return this.name.compareTo(s.getName());
+}
+
+// Java 8 y superior
+// Usando expresiones lambda
+// Usando el método Comparator.comparing()
+students.sort(Comparator.comparing(Student::getAge)
+		.thenComparing(Comparator.comparing(Student::getName)));
+students.forEach(s -> System.out.println(s.getName()));	
+
+
+students.sort((s1, s2) -> {
+	int cmp = s1.getAge() - s2.getAge();
+	if (cmp != 0) {
+		return cmp;
+	}
+	return s1.getName().compareTo(s2.getName());
+});
+students.forEach(s -> System.out.println(s.getName()));	
+
+
+
+students = List.of( 			//List.of java9
+	new Student("John", 25),
+    new Student("Akon", 15),
+    new Student("Johny", 20),
+    new Student("Tony", 10)) 
+students
+	.stream()
+	.sorted(Comparator.comparing(Student::getAge).reversed()
+                       .thenComparing(Comparator.comparing(Student::getName).reversed()))
+	.map(Student::getAge)
+	.forEach(System.out::println);
+		
+		
+Map<Integer, String> unsortMap = new HashMap<Integer, String>();
+unsortMap.put(444, "Arunkumar");
+unsortMap.put(333, "Ziangh");		
+unsortMap.put(555, "Jzyous");
+unsortMap.put(666, "Dlusener");
+unsortMap.put(111, "Lisa");
+unsortMap.put(222, "Narayan");
+Map<Integer, String>unsortMap2 = unsortMap
+	.entrySet()
+	.stream()
+	.filter(p -> p.getValue().contains("A"))
+	.collect(Collectors.toMap(p->p.getKey(),p->p.getValue()));
+
+TreeMap<Integer, String> treeMap = new TreeMap<>(Comparator.reverseOrder()); //Comparator.reverseOrder() = Collections.reverseOrder()
+//TreeMap<Integer, String> treeMap = new TreeMap(unsortMap2);
+treeMap.putAll(unsortMap2);									 //				   -
+treeMap.forEach((k, v) -> System.out.println("Key : " + k + ", Value with 'A' : " + v));	
+		
+Set<Entry<Integer, String>> entrySet = unsortMap.entrySet();
+LinkedList<Integer> linkedList2 = new LinkedList<>(unsortMap.keySet());
+LinkedList<String> linkedList3 = new LinkedList<>(unsortMap.values());
+LinkedList<Entry<Integer, String>> linkedList = new LinkedList<>(unsortMap.entrySet());
+linkedList.sort(Map.Entry.comparingByKey());
+linkedList.sort(Map.Entry.comparingByKey(Comparator.reverseOrder())); 	//= linkedList.sort(Comparator.comparingInt(Entry::getKey));
+linkedList.sort(Map.Entry.comparingByValue());
+linkedList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder())); //=	linkedList.sort(Comparator.comparing(Entry::getValue));
+Comparator <Entry<Integer, String>> comparator = Comparator.comparing(Entry::getValue);	
+Comparator<Entry<Integer, String>> comparator_reversed = comparator.reversed();
+linkedList.sort(comparator_reversed);		
+linkedList.forEach(System.out::println);
+
+linkedList = new LinkedList<>(unsortMap.entrySet());
+Collections.sort(linkedList, new Comparator<Entry<Integer, String>>() 
+{
+    @Override
+    public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) 
+    {
+        return o1.getValue().compareTo(o2.getValue());
+    }
+});
+
+Map<Integer, String> sortedLinkedMap = new LinkedHashMap<Integer, String>(); //LinkedHashMap mantiene el orden de inserción
+for (Entry<Integer, String> entry : linkedList) {
+	sortedLinkedMap.put(entry.getKey(), entry.getValue());
+}
+sortedLinkedMap.forEach((k, v) -> System.out.println("Key : " + k + ", Value asc : " + v));
+
+sortedLinkedMap = unsortMap.entrySet().stream()
+	.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))  //comparingByKey()
+          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+sortedLinkedMap.forEach((k, v) -> System.out.println("Key : " + k + ", Value desc : " + v));

@@ -1,0 +1,405 @@
+apuntes bash shell
+Curso de Bash Script para principiantes: https://www.youtube.com/watch?v=H4ayPYcZEfI
+cat /etc/shells muestra shells o interpretes instalados
+echo $SHELL muestra shell activo
+pwd muestra ubicación
+cd Desktop 
+mkdir bash-course crear carpeta en escritorio
+cd bash-course
+touch archivo.sh crear archivo en carpeta
+chmod +x archivo.sh añadir permiso ejecucion
+./archivo.sh ejecutar archivo.sh
+nohup ./iccdossierbot.sh /tmp/raccordo_Allitude.xlsx >/var/log/appl/Batch/importfile/iccdossierbot$(date +'%Y%m%d%H%M').log &
+ls -alh ver permisos
+#! /bin/bash al principio del .sh, obliga a usar este shell, no el de por defecto o activo
+
+# comentario linea
+: 'comentario
+multiple'
+
+echo "hola" > hola.txt
+
+cat > hola.txt escritura en fichero de los datos de entrada por pantalla tras control+d (para añadir usar >>)
+cat << myText
+esto es un texto
+que se muestrara
+myText
+
+read age entrada datos
+echo "esta es tu $age"
+
+if [ $age -ge 18 ] -eq -lt -le -gt o bien usar paréntesis ((age == > < >= <= 10)) && || combinar
+then
+	echo "adulto"
+elif ((age == 17))
+	echo "casi adulto"
+else
+	echo "$age es de niño"
+fi
+
+case $age in
+	18) 
+	 echo entrada 18
+	;;
+	17) 
+	 echo entrada 17
+	;;
+	*)
+	 echo "otro valor"
+	;;
+esac	 
+
+
+while [ $age -le 10 ]  o until [ $age -ge 10 ]
+do
+	echo $number
+	number=$((number +1 ))
+done
+
+for (( i=0; i < 100; i++ )) for i in {0..100..10} for (i in 1 2 3 4 5)  
+do
+	echo $i    #break acaba bucle, continue salta al siguiente
+done
+
+echo $0 $1 $2 muestra argumentos
+echo $@ es igual que $#, muestra todos los argumentos
+
+args=$@                                                   
+echo "primer argumento ${args[0]}"
+
+while read line
+do
+	echo $line
+done
+
+while read line
+do
+	echo $line
+done < "${/dev/stdin}" entrada por terminal
+done < "${1:-/dev/stdin}" entrada primer parámetro nombre fichero
+
+
+ls 1>file.txt salida sin error va a file.txt = ls > file.txt
+ls 123 1>file.txt 2>errors.txt salida con error va al fichero errors.txt
+ls 123  >file.txt 2>file.txt = ls 123 > file.txt 2>&1 	error a un mismo archivo
+ls -a >& file.txt ls 123>& file.txt 				no error o error a un mismo archivo
+
+wc file.txt cuenta palabras, lineas, caracteres
+wc -l  file.txt muestra lineas
+ls | wc -l la salida de ls se le pasa al comando wc
+ls -l | sort -k5 -rn salida ordenada
+
+message = "hola"
+echo $message | wc -m
+export message  necesario para que pueda usarse en second.sh
+./second.sh
+
+if [ $input1 == $input2 ]
+then	
+ echo "son iguales $input1 e $input2"
+fi
+echo ${input1,,} minuscula
+echo ${input1^^} mayuscula
+echo ${input1,,[AEIOUS]} vocales y S a minuscula
+echo ${input1^^[aeious]} vocales y s a mayuscula
+
+x=10
+y=20
+echo $(( x+y )) suma
+echo $x+$y 	  no suma
+echo $(( x * y )) multiplica
+
+echo $( expr $x + $y ) suma
+echo $( expr $x \* $y ) multiplica
+
+declare -r file="/etc/pass" variable solo lectura, no puede modificarse
+
+names=("a" "b" "c" "d" "e" "f")
+echo ${names[*]} = echo ${names[@]} muestra todos los items
+echo "item 0: ${names[0]}"
+echo "indices: ${!names[@]}"
+echo "total items: ${#names[@]}"
+echo "ultimo item: ${#names[${!names[@]}-1]}"
+for $name in ${#names[@]}
+do
+	echo $name
+done
+
+unset $names[1] borra elemento posicion 2
+$names[6]="g" = names[${#names[@]}]="g" = names+=("g") añadir item
+
+
+function sayHello(){
+    local message = $1 #diferente variable mediante local
+	echo $1 $message
+}
+message = "2"
+sayHello "1"
+echo $1 $message
+echo "introduce carpeta"
+read folder
+if [ -d $folder] comprobar carpeta existe
+echo "introduce fichero"
+read file
+if [ -f $file] comprobar fichero existe
+then 
+  echo "introduce contenido"
+  read contenido >> $file  insertamos contenido en fichero
+fi
+
+if [ -f $file] comprobar fichero existe
+then 
+	while IFS= read -r line
+	do
+	  echo $line  mostramos linea de ficheroº
+	done < $file	metemos en la entrada el fichero
+fi
+	
+curl "https://jsonplaceholder.typicode.com/users" lanzar peticiones
+curl "https://freetestdata.com/wp-content/uploads/2022/02/Free_Test_Data_117KB_JPG.jpg" > myfile.jpg
+read url
+curl -I $url informacion headers
+
+bash -x file.sh depuracion completa  o bien en primera linea .sh #! /bin/bash -x para depuracion completa
+set -x depuracion parcial solo entre set -x y set +x (no hay que indicarle #! /bin/bash -x porque haría depuracion completa)
+for...
+set +x
+	
+MAS DE 30 COMANDOS en LINUX para manejar tu SERVER!: https://www.youtube.com/watch?v=0BA4k3jweaE
+ls -alh all lista humano
+ls -alh images lista carpeta images
+ls -ltr ./filetreatment/ord_FLHOS3FX_SAPOITMMXXX*
+vim .bashrc ver alias de comandos
+cp archivo archivo2 o carpeta
+cp -a myMusic/ myMedia/ copia cotenido toda la carpeta
+rm documents/readme.txt borra archivos o carpeta
+rm -rf documents/ vacía carpeta
+mv readme.txt documents/ mover archivos o carpeta
+rsync -av images/ images2/ sincronica archivos entre carpetas
+touch archivo.txt =  > archivo.txt crea archivo
+du -sh /var/lib/ uso disco
+du -sh /var/lib/* uso disco detalle
+stat readme.txt detalle fichero
+zip -r images.zip images comprimir directorio
+unzip images.zip
+zipinfo images.zip ver contenido zip
+tree muestra arbol directorios
+find . -mtime +5 buscar archivo mas antigos de 5 días
+find . -iname "archivo*"  buscar archivo por nombre
+find . -iname "archivo*" -delete  buscar archivo por nombre y borrarlos (no pueden recuperarse los archivos borrados por consola o terminal porque no hay papelera)
+find /flash/ -name 20250303_101758_2380571-ord_FLHOS3FX_BRRRITM1XXX_2025_03_03_09_57_23.txt
+find . -iname "*_2025_05_21_13_10_17*"
+cal calendario
+cal 11 2020
+date muestra fecha
+date -d "+7 days"
+bc calculadora
+top muestra procesos corriendo en servidor
+ps fax ver todos los procesos en arbol
+ps -ef | grep java --- muestra todos los procesos JAVA
+pgrep -f ba_sendorders.sh te devuelve pid proceso
+kill proceso mata proceso
+Kill -9 proceso mata proceso
+killall dhclient mata todos los procesos con ese nombre 
+curl url hacer peticiones
+cat muestra contenido archivo y sale
+grep hola readme.txt
+cat readme.txt | grep hola | grep pelado redireccionar salida
+grep -v hola readme.txt filtra lineas sin hola
+grep -r hola mymedia muestra todos los archivos en carpeta con hola
+grep -rl '284633' /flash/app/data/mil/receive/ | grep '/FLHOD' busca archivos con 284633 y despues filtra por FLHOD
+grep -rl ' 4350852 ' /flash/logs | grep '/ba_'
+grep '146473' /flash/app/data/mil/receive/save/FLHOS3FA.2025062603372163_ETSGITM1XXX.000500000009AC56 | awk '{print substr($0, 1, 100)}' busca texto en archivo y se queda con las 100 primeros caracteres de linea
+for i in $(find ./log/ -name ba_processconfirmations*.log -ctime -15 ) ; do echo $(ll $i) "    " $(egrep Processed $i); done | egrep -v 'Processed 0'
+egrep -B10 -A10 341112 ./log/ba_processconfirmations.log
+df -h muestra espacio disponible en servidor
+sed -n '1099864,$p' iccdossierbot.log > outputfileiccdossierbotlog.log
+control-r ver historial comandos
+history lista todos los comandos
+history | grep grep
+sleep 1m
+control-z pone proceso en pausa
+bg trae proceso a background y va a seguir funcionando pero sin terminal
+fg trae proceso a foreground (con terminal)
+control-c terminar proceso
+
+exit control-d salir de terminal
+
+nohup /flash/app/script/ba_receiveorders.sh 'MIL' 'FLHID3FA' '/flash/app/data/mil/receive/1_BCIIITX_20250228102700000ITXTestMasivo.xml.out' >/flash/logs/ba_receiveorders$(date +'%Y%m%d%H%M').log &
+nohup /flash/app/script/ba_sendorders.sh 'MIL' >/flash/logs/ba_sendorders$(date +'%Y%m%d%H%M').log &
+
+mover a carpeta los .ddl y dml y situarse en /tmp/omv
+$isql -UFLASH_dbo -Pafbdefpass -DFLASH -i "script_ICC_802_R3_12_0_01_DDL.sql"
+$isql -UFLASH_dbo -Pafbdefpass -DFLASH -i "script_ICC_802_R3_12_1_01_DML.sql"
+
+ 
+
+
+securitas apuntes
+----------------------------------
+ps -ef | grep java --- muestra todos los procesos JAVA
+ps -ef | grep ba_ --- muestra todos los procesos ba_*
+lsof /tmp/ba_script.lock --muestra los procesos esperando
+cp /tmp/CapGemini/gta.log /opt/gta/log
+cat /dev/null > gta.log (vaciar)
+cat /dev/null >  /gta/conf/log4j.xml
+cp /tmp/CapGemini/Debug.log /opt/gta/log
+tail -f /opt/gta/log/gta.log
+sudo su - alarmapp
+cd /gta/boot startup.sh
+./startup.sh
+
+Acceso a la máquina Linux
+Putty : es1pregta02v
+Usuario: confiapro
+Pwd: LJuk#bCXF6s$
+sudo su - alarmapp (para cambiar a usuario con permisos una vez entrado con el usuario confiapro)
+sudo su - alarmapp
+cd /gta/boot/
+ls -l
+./shutdown.sh
+./startup_dbg.sh
+
+cd /gta/Powercuts/  (para arrancar powercuts, mismo jar con clases compartidas pero 2 ficheros.jar independientes. copy jar en /gta/Powercuts/lib desde temp) - Hablar con Pablo que tiene ultimo visio y controla bastante de powercut    /gta/Powercuts/log/ para log
+./startup_dbg.sh
+ 
+cd /opt/Powercuts/lib/
+cd /opt/Powercuts/boot/
+cd /opt/Powercuts/log/
+ ./startup_dbgpwc.sh
+cp /tmp/GTA/GTA.jar /gta/Powercuts/lib
+cp /tmp/GTA/GTX.jar /gta/Powercuts/lib
+cp /tmp/CapGemini/GTA.jar /gta/lib
+cp /tmp/GTA/GTX.jar /gta/lib
+cp /tmp/GTA/this.properties /gta/conf
+cp /tmp/capgemini/IIC_06_02_2020_PRE/IIC_it.xml /iic/02.02/conf
+cp /tmp/GTA/gta.log /gta/log/gta.log
+cp /tmp/CapGemini/powercuts.log /opt/Powercuts/log/powercuts.log
+cp /tmp/startup_dbgpwc.sh /opt/Powercuts/boot
+cp /tmp/powercuts.log /gta/Powercuts/log
+cp /iic/02.02/conf/DataSource.xml /tmp/
+cp /tmp/informer/lib/INF.jar /opt/SDSW/informer/lib
+cp /tmp/Informer/conf/informer.properties /opt/SDSW/informer/conf/
+chmod 777 /tmp/DataSource.xml
+chmod -R 777 /tmp/CapGemini/
+cp /tmp/Informer/conf/informer.properties /opt/SDSW/informer/conf
+cp /tmp/Informer/lib/INF.jar /opt/SDSW/informer/lib
+cp /tmp/Informer/boot/startup_per.sh /opt/SDSW/informer/boot
+cd  /opt/SDSW/informer/boot
+./startup_per.sh    
+tail -f /opt/SDSW/informer/log/informer.log
+cp /tmp/Informer/boot/shutdown_bra.sh /opt/SDSW/informer/boot  
+/opt/SDSW/informer/boot/./shutdown_bra.sh
+/opt/SDSW/informer/boot/./startup_esp.sh
+
+[alarmapp@epi1corgta0v ~]$ exit
+logout
+[monitoring@epi1corgta0v ~]$ chmod -R 777 /tmp/CapGemini/
+[monitoring@epi1corgta0v ~]$ sudo su - alarmapp
+[alarmapp@epi1corgta0v ~]$ cp /tmp/CapGemini/GTA.jar /gta/lib/
+
+
+cp /tmp/Informer/boot/startup_bra.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/boot/startup_per.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/boot/startup_por.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/boot/shutdown_por.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/boot/shutdown_per.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/boot/shutdown_bra.sh /opt/SDSW/informer/boot
+cp /tmp/Informer/lib/INF.jar /opt/SDSW/informer/lib
+
+limpieza logs
+cp /tmp/CapGemini/powercuts.log /opt/Powercuts/log
+cp /tmp/CapGemini/gta.log /gta/log
+
+
+matar sin fallo
+kill -9 del pid java (pid mediante netstat -nepal)
+kill -9 23716
+ps -ef | grep java --- muestra todos los procesos JAVA
+
+en local:
+taskkill /F /IM PanGPA.exe
+
+rm -Rf directorio (borra también subdirectorios) 
+cd carpeta_que_quieres_borrar, rm * (borra contenido carpeta) rm fichero a borrar
+mkdir carpeta
+rm -Rf /iic/monitores/POR
+rm -Rf /iic/monitores/CHI
+rm -Rf /iic/monitores/BRA
+limpiar espacio
+rm /tmp/*.tmp.lck
+rm -rf /tmp/*.tmp
+cp /tmp/Capgemini/powercuts.log /opt/Powercuts/
+cp /tmp/Capgemini/Debug.log /opt/Powercuts/log
+mv fichero1 fichero2 renombrar
+
+Uso de vi: (linux) editar this.properties, common.properties
+Control c parar log
+cd /gta/conf/
+vi this.properties
+...
+Edición de ficheros xml de IIC en es1preiicsrv02v
+sudo su - alamarmapp aplicar permisos
+cd /iic/02.02/conf
+vi IIC_es.xml (vi IIC_es tabulador) filtra ficheros
+flechas para moverse
+G ir al final
+alt i para modificar
+escape para quitar accion
+:w intro para grabar
+:q! salir sin grabar
+
+chmod 755 startup_dbgpwc.sh
+tail -f /gta/log/gta.log | grep 'ESP' | grep 'ArrayIndexOutOfBoundsException'
+tail -f /gta/log/gta.log | grep -E '\[ESP'
+tail -f /gta/log/gta.log | grep 'ESP' | grep '>'
+tail -f  /opt/Powercuts/log/powercuts.log | grep 'ESP' | grep '>'
+cat /gta/log/gta.log | grep 'GBR' | grep '>'
+cat /gta/log/gta.log | grep 'ESP393007248' | grep ">"
+cat /gta/log/gta.log | grep ESP....
+cat /gta/log/gta.log | grep 537277 | grep send:
+cat /gta/log/gta.log | grep ITA23038970
+tail -f /gta/log/gta.log
+tail -f /opt/gta/gta.log
+tail -f /opt/Powercuts/log/powercuts.log
+tail -f /gta/log/gta.log
+tail -1000f /opt/Powercuts/log/powercuts.log | grep -v 'no incidences left' (ultimas 1000 lineas y que no contenga no incidences left)
+tail -1000f /gta/log/gta.log | grep -v 'no incidences left' 
+tail -1000f /opt/gta/gta.log | grep -v 'no incidences left' 
+tail -1000f /gta/log/gta.log | grep '>'
+tail -f /gta/log/gta.log | grep '>'
+tail -2000f /gta/log/gta.log | grep 'actionId=CHECK_ASR token='
+/gta/boot/startup.sh
+/gta/boot/shutdown.sh
+tail -f /gta/log/gta.log
+cd /gta/conf
+vi this.properties
+tail -f /gta/log/gta.log | grep '>'
+tail -f /gta/log/gta.log | grep 34528734
+tail -f /opt/SDSW/informer/log/informer.log
+tail -2000f cft.log | egrep -B3 'parameters.*(FLHID3FX|FLHOS3FA|FLHIS3FX|FLHOD3FA)'
+
+
+-------
+xml fomateo
+https://meyerweb.com/eric/tools/dencoder/
+
+-------
+json formater
+https://jsonformatter.curiousconcept.com/ 
+
+
+
+escritura log
+exec sbnpro..ma_alarmlogoper 11371115, @s_inc, 135, "Inicio proc", 0, 0, "", "MSBN", -1, -1, 10516, 0, 0
+exec sbnpro..ma_alarmlogoper 147924, @s_inc, 217, "ma_alarmqueue16", 0, 0, "", "MSBN", -1, -1, 10492, 0, 0
+declare @comment varchar(32) 
+set @comment = convert(varchar(2), @queue) + ", " + convert(varchar(2), @t0) + ", " +@instance +
+  ", "   + convert(varchar(2), @priority) +  ","    + convert(varchar(2),  @direction) + 
+  ", " +convert(varchar(10), @posRepFlag) + ", " + convert(varchar(2), @operatorPrio) 
+
+exec sbnpro..ma_alarmlogoper @s_ins, @s_inc, 217, @comment, 0, 0, "", "MSBN", -1, -1, 10492, 0, 0
+exec sbnpro..ma_alarmlogoper @s_ins, @s_inc, 217, @deal_id, 0, 0, "", "MSBN", -1, -1, 10492, 0, 0
+
+-- exec sbnpro..ma_alarmlogoper @s#ins, @s_inc, 47, 'INI07222288', 0, 0, '', 'MSBN', -1, -1, 0, 0, 0
+-- execute sbnpro..inet_ma_alarmlogoper @s#ins,0,16, 'comentario',0,0,"",""  
