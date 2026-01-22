@@ -110,8 +110,10 @@ Calendar calendar = Calendar.getInstance();
 calendar.setTimeZone(TimeZone.getTimeZone("Africa/Cairo"));
 // System.out.println("Hora en Africa/Cairo: " + getHoraFormato(calendar));
 Instant instant = calendar.toInstant();
-LocalDateTime ldtMadrid = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Madrid")); // calcula hora local Madrid con zona
-LocalDateTime ldtTurkey = LocalDateTime.ofInstant(instant, ZoneId.of("Turkey")); // calcula hora local Madrid con zona
+LocalDateTime ldtCairo = instant.atZone(calendar.getTimeZone().toZoneId()).toLocalDateTime(); // calcula hora local Africa/Cairo con zona (invierno +02:00, verano +03:00)
+LocalDateTime ldtMadrid = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Madrid")); // calcula hora local Madrid con zona (invierno +01:00, verano +02:00)
+LocalDateTime ldtTurkey = LocalDateTime.ofInstant(instant, ZoneId.of("Turkey")); // calcula hora local Turquia con zona (todo el año +03:00)
+ldtCairo.isBefore(ldtTurkey); // true en invierno, false en verano
 ldtMadrid.isBefore(ldtTurkey); // true
 ldtMadrid.isAfter(ldtTurkey); // false
 
