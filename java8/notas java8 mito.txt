@@ -33,8 +33,8 @@ referencia a metodo instancia: 	Arrays.sort(nombres,(p1,p2) -> p1.compareToIgnor
 								IOperacion op = (x,y)->objeto.metodo(x,y);
 								op.saludar(1,2);
 								
-								IOperacion op = objeto::metodo; //no pueden pasarse parámetros
-								IOperacion op = this::metodo; 
+								IOperacion op = clase::metodo; //no pueden pasarse parámetros
+								IOperacion op = objeto::metodo; 
 								op.saludar();  
 
 								IPersona ipersona = (x,y)->new Persona(x,y);
@@ -144,8 +144,8 @@ LocalDateTime.now().atZone(ZoneId.of("+05:00")); // crea zdt
 LocalDateTime.now().atZone(zoneId); // crea zdt con offset +01:00
 LocalDateTime.now().atZone(zoneId).toLocalDateTime(); // crea ldt
 OffsetDateTime odt = LocalDateTime.now().atOffset(ZoneOffset.of("+01:00"));
-odt.withOffsetSameLocal(ZoneOffset.of("+02:00")); // crea odt con offset +02:00, misma hora no calcula, diferente offset
-odt.withOffsetSameInstant(ZoneOffset.of("+03:00")); // calcula nueva hora
+odt.withOffsetSameLocal(ZoneOffset.of("+02:00")); // crea otro odt con offset +02:00, misma hora no calcula, diferente offset
+odt.withOffsetSameInstant(ZoneOffset.of("+03:00")); // calcula otro odt nueva hora
 ZonedDateTime zdt = LocalDateTime.now().atZone(zoneId); // crea zdt con zoneid +01:00
 zdt.withZoneSameLocal(ZoneId.of("Africa/Cairo")); // crea zdt con zoneid Africa/Cairo, misma hora no calcula, diferente zoneid
 zdt.withZoneSameInstant(ZoneId.of("Africa/Cairo")); // calcula nueva hora

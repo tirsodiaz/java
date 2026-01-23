@@ -12,5 +12,8 @@ public class FuncInterApp {
 		FuncInterApp app = new FuncInterApp();
 		double rpta = app.operar(2, 3);
 		System.out.println(rpta);
+		
+		Operacion op = app::operar; //no pueden pasarse parámetros
+		System.out.println(op.calcular(2,2));
 	}
 }
