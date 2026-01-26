@@ -1,19 +1,39 @@
 https://www.youtube.com/watch?v=4WEOzOndA68&list=PLvimn1Ins-419yVe5iPfiXrg4mZJl5kLS&index=1 (http://www.github.com/mitocode21)
-expresion lambda o predicado = metodo anónimo (donde se pueda usar un método anónimo se puede usar lambda o bien una referencia a método (::) en donde no pueden pasarse parámetros)
-
+expresion lambda o predicado = metodo anónimo sobreescrito (donde se pueda usar un método anónimo se puede sustituir por un predicado lambda o bien una referencia a método (::) en donde no pueden pasarse parámetros porque no puede usarse ()->)
+Se sustituye la implementacion del método de la clase anónima o interfaz funcional por expresión predicado lambda o por referencia a método
 Collections.sort(lista, (String p1,String p2) -> p1.compareTo(p2)); //2º parámetro es un predicado lambda
 Collections.sort(lista, String::compareTo);							//2º parámetro es un predicado referencia a método menos verboso o imperativo, más funcional que el anterior
-
+public class FuncInterApp {
+	public double operar(double x, double y){
+	public double operar(double x, double y){
+		Operacion op1 = (n1,n2) -> n1 + n2;
+		Operacion op2 = (n1,n2) -> n1 - n2;
+		          op2 = (n1,n2) -> this.restar(n1,n2); //equivalente a la línea anterior
+				  op2 = this::restar; //clase::restar (si static) //equivalente a la línea anterior
+		          op2 = (n1,n2) -> this::restar(n1,n2); //no válido, no pueden pasarse parámetros porque no puede usarse ()->		
+		return op1.calcular(x, y) + op2.calcular(x, y);	//paso de parámetros tanto a la expresión predicado lambda como al método referenciado
+	}	
+	public double restar(double x, double y){
+		return x - y;		
+	}	
+	public static void main(String[] args) {
+		FuncInterApp app = new FuncInterApp();
+		double rpta = app.operar(2, 3);
+		System.out.println(rpta);
+		
+		Operacion op = app::operar; //app::operar(2,3); no pueden pasarse parámetros en la referencia a método
+		System.out.println(op.calcular(1,2)); //paso de parámetros	
+	}
 
 Las referencias son siempre a partir de interfaces funcionales (solo un método y no está definido)
-IOperacion operacion =  (x,y) ->         (x+y)/2; // IOperacion es una interface funcional. @FunctionalInterface es opcional en la interface
+IOperacion operacion =  (x,y) ->         (x+y)/2; // IOperacion es una interface funcional. @FunctionalInterface es opcional pero recomendable en la interface
 IOperacion operacion =  (x,y) -> {return (x+y)/2;};
 IOperacion operacion =  (x,y) -> {
-		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
+		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión predicado lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
 		return (x+y)/2 + z;
 };
 IOperacion operacion =  () -> {
-		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
+		double z = 2.0; //(es opcional poner final, las variables locales se comportan como final. En una clase anónima o expresión predicado lambda las variables locales no pueden alterarse). En cambio atributos y globales o estáticos sí pueden sobreescribirse
 		return (1+1)/2 + z;
 };
 operacion.calcularPromedio(2,3);
@@ -25,9 +45,15 @@ interface con método default está implementado. Si implementamos de varios int
 
 referencia a metodo estatico: 	IOperacion op = ()->Clase.metodoestatico();
 								op.saludar();
-referencia a metodo estatico: 	IOperacion op = Clase::metodoestatico; //no pueden pasarse parámetros
+referencia a metodo estatico: 	IOperacion op = Clase::metodoestatico; //:: no pueden pasarse parámetros (x)->Clase::metodoestatico(x)
 								op.saludar();  
-referencia a metodo instancia: 	Arrays.sort(nombres,(p1,p2) -> p1.compareToIgnoreCase(p2));
+referencia a metodo instancia: 	IOperacion op = ()->objeto.metodo();
+								op.saludar();
+								IOperacion op = ()->this.metodo(); 
+								op.saludar();
+								IOperacion op = this::metodo; objeto::metodo //:: no pueden pasarse parámetros (x)->objeto::metodo(x)
+								op.saludar();
+								Arrays.sort(nombres,(p1,p2) -> p1.compareToIgnoreCase(p2));
 								Arrays.sort(nombres,String::compareToIgnoreCase);
 								
 								IOperacion op = (x,y)->objeto.metodo(x,y);

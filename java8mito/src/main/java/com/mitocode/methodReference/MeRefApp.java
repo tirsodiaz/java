@@ -31,23 +31,28 @@ public class MeRefApp {
 	}
 
 	public void referenciarConstructor() {
-		/*
-		 * IPersona iper = new IPersona(){
-		 * 
-		 * @Override public Persona crear(int id, String nombre) { return new
-		 * Persona(id, nombre); }
-		 * 
-		 * }; iper.crear(1, "MitoCode");
-		 */
-
-		/*
-		 * IPersona iper2 = (x,y)->(new Persona(x,y)); Persona per =
-		 * iper2.crear(1, "MitoCode");
-		 * System.out.println(per.getId()+" - "+per.getNombre());
-		 */
-
+		
+		
+		IPersona iper = new IPersona() {
+		  
+			@Override
+			public Persona crear(int id, String nombre){ //implementación del método de la clase anónima o interfaz funcional (verboso)
+				return new Persona(id, nombre);
+			}
+		 
+		};
+		 
+		Persona per = iper.crear(1, "MitoCode");
+		System.out.println(per.getId()+" - "+per.getNombre());
+		
+		//sustitución de la implementacion del método de la clase anónima o interfaz funcional por expresión lambda
+		IPersona iper2 = (x,y)->(new Persona(x,y)); 
+		per = iper2.crear(1, "MitoCode");
+		System.out.println(per.getId()+" - "+per.getNombre());
+		
+		//sustitución de la implementacion del método de la clase anónima o interfaz funcional por referencia a constructor
 		IPersona iper3 = Persona::new;
-		Persona per = iper3.crear(1, "MitoCode");
+		per = iper3.crear(1, "MitoCode");
 		System.out.println(per.getId() + " - " + per.getNombre());
 	}
 
